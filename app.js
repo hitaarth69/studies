@@ -355,14 +355,33 @@ function renderTopic() {
             contentHtml += `<pre><code class="lang-${lang}">${escHtml(cb.code)}</code></pre>`;
         });
     }
-    let youtubeHtml = topic.youtube ? `<div class="youtube-wrap"><iframe src="${topic.youtube}" allowfullscreen loading="lazy"></iframe></div>` :
-        '';
     const objectivesHtml = topic.objectives?.length ? `<ul>${topic.objectives.map(o=>`<li>${escHtml(o)}</li>`).join('')}</ul>` :
         '';
     const takeawaysHtml = topic.keyTakeaways?.length ? `<ul>${topic.keyTakeaways.map(t=>`<li>${escHtml(t)}</li>`).join('')}</ul>` :
         '';
     const questionsHtml = topic.practiceQuestions?.length ? `<ul>${topic.practiceQuestions.map(q=>`<li>${escHtml(q)}</li>`).join('')}</ul>` :
         '';
+
+    // Build resources HTML
+    let resourcesHtml = '';
+    if (topic.resources && topic.resources.length > 0) {
+        resourcesHtml = `
+                <h3>📚 Learn More</h3>
+                <ul style="list-style:none;padding-left:0;display:flex;flex-wrap:wrap;gap:0.5rem;">
+                    ${topic.resources.map(r => `
+                        <li style="display:inline-block;">
+                            <a href="${r.url}" target="_blank" rel="noopener noreferrer" 
+                               style="display:inline-block;padding:0.3rem 1rem;background:var(--bg-input);
+                                      border:1px solid var(--border-color);border-radius:40px;
+                                      color:var(--accent);text-decoration:none;font-size:0.8rem;
+                                      transition:all var(--transition);">
+                                ${r.name}
+                            </a>
+                        </li>
+                    `).join('')}
+                </ul>
+            `;
+    }
 
     pageContent.innerHTML = `
             <div class="topic-hero">
@@ -381,10 +400,11 @@ function renderTopic() {
                 </div>
             </div>
             <div class="topic-body">
-                ${contentHtml}${youtubeHtml}
+                ${contentHtml}
                 ${objectivesHtml ? `<h3>📌 Learning Objectives</h3>${objectivesHtml}` : ''}
                 ${takeawaysHtml ? `<h3>🎯 Key Takeaways</h3>${takeawaysHtml}` : ''}
                 ${questionsHtml ? `<h3>🧠 Practice Questions</h3>${questionsHtml}` : ''}
+                ${resourcesHtml}
             </div>
             <div class="topic-nav">
                 <div>${prev ? `<button class="btn btn-outline" id="topic-prev" data-sem="${prev.semesterId}" data-subj="${prev.subjectId}" data-topic="${prev.id}"><i class="fas fa-arrow-left"></i> ${prev.title}</button>` : ''}</div>
